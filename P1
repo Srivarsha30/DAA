@@ -23,4 +23,4 @@ def measure_time(n):
 # Experiment with different values of n
 for n in [10, 20, 30, 40, 50]:
     elapsed_time = measure_time(n)
-    print(f"Time for n={n}: {elapsed_time:.4f} seconds")
+    print(f"Time for n={n}: {elapsed_time:.4f} nano seconds")
