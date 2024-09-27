@@ -1,0 +1,75 @@
+import random
+import time
+import matplotlib.pyplot as plt
+
+# Union-Find implementation
+class UnionFind:
+    def __init__(self, size):
+        self.parent = list(range(size))
+        self.rank = [1] * size
+
+    def find(self, p):
+        if self.parent[p] != p:
+            self.parent[p] = self.find(self.parent[p])
+        return self.parent[p]
+
+    def union(self, p, q):
+        rootP = self.find(p)
+        rootQ = self.find(q)
+        if rootP != rootQ:
+            if self.rank[rootP] > self.rank[rootQ]:
+                self.parent[rootQ] = rootP
+            elif self.rank[rootP] < self.rank[rootQ]:
+                self.parent[rootP] = rootQ
+            else:
+                self.parent[rootQ] = rootP
+                self.rank[rootP] += 1
+
+def kruskal(n, edges):
+    # Sort edges by weight
+    edges.sort(key=lambda x: x[2])  # Assuming edges are tuples (u, v, weight)
+    uf = UnionFind(n)
+    mst = []
+    
+    for u, v, weight in edges:
+        if uf.find(u) != uf.find(v):
+            uf.union(u, v)
+            mst.append((u, v, weight))
+    
+    return mst
+
+# Function to generate a random connected graph
+def generate_graph(n, m):
+    edges = set()
+    while len(edges) < m:
+        u = random.randint(0, n-1)
+        v = random.randint(0, n-1)
+        if u != v:
+            weight = random.randint(1, 100)
+            edges.add((u, v, weight))
+    return list(edges)
+
+# Experimentation
+num_edges = []
+execution_times = []
+
+for m in [10, 100, 1000, 5000, 10000]:
+    n = m // 2  # Number of vertices
+    edges = generate_graph(n, m)
+    
+    start_time = time.time()
+    kruskal(n, edges)
+    end_time = time.time()
+    
+    num_edges.append(m)
+    execution_times.append((end_time - start_time) * 1000)  # Convert to milliseconds
+
+# Plotting results
+plt.plot(num_edges, execution_times, marker='o')
+plt.xscale('log')
+plt.yscale('log')
+plt.xlabel('Number of Edges (m)')
+plt.ylabel('Execution Time (ms)')
+plt.title('Experimental Time Complexity of Kruskal\'s Algorithm')
+plt.grid()
+plt.show()
